@@ -1,0 +1,4 @@
+/vendor/
+/recordFiles/*
+/.idea/
+!.gitkeep

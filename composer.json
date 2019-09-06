@@ -1,0 +1,20 @@
+{
+    "name": "tausendstel-licht/zeit-buchung",
+    "description": "Console tool to record working time.",
+    "type": "project",
+    "require": {
+        "symfony/console": "^4.3",
+        "php": "^7.2"
+    },
+    "authors": [
+        {
+            "name": "Lukas-Hubert von Zukowski",
+            "email": "tausendstel.licht@gmail.com"
+        }
+    ],
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    }
+}
