@@ -25,6 +25,18 @@ class RecordStructure
     private $timeInMinutes;
 
     /**
+     * RecordStructure constructor.
+     *
+     * @param DateTime $start
+     * @param string $message
+     */
+    public function __construct(DateTime $start, string $message)
+    {
+        $this->start = $start;
+        $this->message = $message;
+    }
+
+    /**
      * @return DateTime
      */
     public function getStart(): DateTime
