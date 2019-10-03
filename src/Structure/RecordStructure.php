@@ -24,9 +24,6 @@ class RecordStructure
     /** @var int */
     private $timeInMinutes;
 
-    /** @var float */
-    private $timeInHours;
-
     /**
      * @return DateTime
      */
@@ -93,22 +90,5 @@ class RecordStructure
     public function setTimeInMinutes(int $timeInMinutes): void
     {
         $this->timeInMinutes = $timeInMinutes;
-    }
-
-    /**
-     * @return float
-     */
-    public function getTimeInHours(): float
-    {
-        return $this->timeInHours;
-    }
-
-    /**
-     * @param float $timeInHours
-     * @return void
-     */
-    public function setTimeInHours(float $timeInHours): void
-    {
-        $this->timeInHours = $timeInHours;
     }
 }
