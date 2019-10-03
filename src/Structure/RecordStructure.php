@@ -13,27 +13,31 @@ use DateTime;
 class RecordStructure
 {
     /** @var DateTime */
-    private $start;
+    public $start;
 
     /** @var DateTime */
-    private $end;
+    public $end;
 
     /** @var string */
-    private $message;
+    public $message;
 
     /** @var int */
-    private $timeInMinutes;
+    public $timeInMinutes;
 
     /**
      * RecordStructure constructor.
      *
      * @param DateTime $start
+     * @param null|DateTime $end
      * @param string $message
+     * @param int $timeInMinutes
      */
-    public function __construct(DateTime $start, string $message)
+    public function __construct(DateTime $start, ?DateTime $end, string $message, int $timeInMinutes)
     {
         $this->start = $start;
+        $this->end = $end;
         $this->message = $message;
+        $this->timeInMinutes = $timeInMinutes;
     }
 
     /**
@@ -54,9 +58,9 @@ class RecordStructure
     }
 
     /**
-     * @return DateTime
+     * @return null|DateTime
      */
-    public function getEnd(): DateTime
+    public function getEnd(): ?DateTime
     {
         return $this->end;
     }
