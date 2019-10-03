@@ -4,25 +4,26 @@
 namespace ZeitBuchung\Structure;
 
 use DateTime;
+use JsonSerializable;
 
 /**
  * Class RecordStructure
  *
  * @package ZeitBuchung\Structure
  */
-class RecordStructure
+class RecordStructure implements JsonSerializable
 {
     /** @var DateTime */
-    public $start;
+    private $start;
 
     /** @var DateTime */
-    public $end;
+    private $end;
 
     /** @var string */
-    public $message;
+    private $message;
 
     /** @var int */
-    public $timeInMinutes;
+    private $timeInMinutes;
 
     /**
      * RecordStructure constructor.
@@ -162,6 +163,24 @@ class RecordStructure
             'end' => $this->getHumanReadableEndTime(),
             'message' => $this->getMessage(),
             'time' => $this->getHumanReadableTimePeriod(),
+        ];
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @link https://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'start' => $this->start,
+            'end' => $this->end,
+            'message' => $this->message,
+            'timeInMinutes' => $this->timeInMinutes,
         ];
     }
 }
