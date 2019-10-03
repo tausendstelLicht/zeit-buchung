@@ -103,4 +103,61 @@ class RecordStructure
     {
         $this->timeInMinutes = $timeInMinutes;
     }
+
+    /**
+     * @param DateTime $dateTime
+     * @return string
+     */
+    private function getHumanReadableTime(DateTime $dateTime): string
+    {
+        if (null !== $dateTime) {
+            return date('H:i:s', $dateTime->getTimestamp());
+        }
+
+        return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getHumanReadableStartTime(): string
+    {
+        return $this->getHumanReadableTime($this->start);
+    }
+
+    /**
+     * @return string
+     */
+    public function getHumanReadableEndTime(): string
+    {
+        return $this->getHumanReadableTime($this->end);
+    }
+
+    /**
+     * @return string
+     */
+    public function getHumanReadableTimePeriod(): string
+    {
+        if (15 <= $this->timeInMinutes) {
+            $sumInHours = round($this->timeInMinutes / 60, 2);
+            $return = $sumInHours . 'h';
+        } else {
+            $return = $this->timeInMinutes . 'm';
+        }
+
+        return $return;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            'start' => $this->getHumanReadableStartTime(),
+            'end' => $this->getHumanReadableEndTime(),
+            'message' => $this->getMessage(),
+            'time' => $this->getHumanReadableTimePeriod(),
+        ];
+    }
 }
