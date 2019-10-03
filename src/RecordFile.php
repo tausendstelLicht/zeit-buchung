@@ -111,6 +111,7 @@ class RecordFile
      *
      * @return void
      * @throws ZeitBuchungException
+     * @throws Exception
      */
     private function readFile(): void
     {
@@ -141,15 +142,15 @@ class RecordFile
     /**
      * calculates the time difference between start and stop, minimum time is 1 minute
      *
-     * @param string $start
-     * @param string $stop
+     * @param int $start
+     * @param int $stop
      * @return int
      */
-    private function calculateTime(string $start, string $stop): int
+    private function calculateTime(int $start, int $stop): int
     {
         $return = '1';
 
-        $timeInSeconds = strtotime($stop) - strtotime($start);
+        $timeInSeconds = $stop - $start;
         $timeInMinutes = round($timeInSeconds / 60);
         if (1 < $timeInMinutes) {
             $return = $timeInMinutes;
@@ -238,7 +239,7 @@ class RecordFile
             $start = new DateTime();
         }
 
-        $this->contentArray[] = new RecordStructure($start, $message);
+        $this->contentArray[] = new RecordStructure($start, null, $message, 0);
 
         $writeResult = file_put_contents($this->path . $this->fileName, json_encode($this->contentArray));
 
@@ -277,8 +278,6 @@ class RecordFile
             $table->addRow($record->toArray());
         }
 
-        $table->addRows($this->contentArray);
-
         $table->render();
 
         $this->io->newLine();
@@ -302,15 +301,15 @@ class RecordFile
         $lastRecord = $this->contentArray[$lastRecordKey];
 
         $calculatedTime = $this->calculateTime(
-            $lastRecord->getHumanReadableStartTime(),
-            date('H:i:s')
+            strtotime($lastRecord->getHumanReadableStartTime()),
+            strtotime(date('H:i:s'))
         );
 
         $this->io->text([
             'Active record:',
             $lastRecord->getMessage(),
             $lastRecord->getHumanReadableStartTime()
-            . ' (' . $calculatedTime . ')',
+            . ' (' . $this->getHumanReadableSum($calculatedTime) . ')',
         ]);
         $this->io->newLine();
 
@@ -426,13 +425,31 @@ class RecordFile
     /**
      * @param string $contentString
      * @return void
+     * @throws Exception
      */
     private function setContentArray(string $contentString): void
     {
         $contentArray = [];
 
         if (!empty($contentString)) {
-            $contentArray = json_decode($contentString, false);
+            $jsonArray = json_decode($contentString, false);
+
+            if (!empty($jsonArray)) {
+                foreach ($jsonArray as $record) {
+                    if (null === $record->end) {
+                        $end = null;
+                    } else {
+                        $end = new DateTime($record->end->date);
+                    }
+
+                    $contentArray[] = new RecordStructure(
+                        new DateTime($record->start->date),
+                        $end,
+                        $record->message,
+                        $record->timeInMinutes
+                    );
+                }
+            }
         }
 
         $this->contentArray = $contentArray;
