@@ -109,10 +109,10 @@ class RecordStructure
     }
 
     /**
-     * @param DateTime $dateTime
+     * @param null|DateTime $dateTime
      * @return string
      */
-    private function getHumanReadableTime(DateTime $dateTime): string
+    private function getHumanReadableTime(?DateTime $dateTime): string
     {
         if (null !== $dateTime) {
             return date('H:i:s', $dateTime->getTimestamp());
