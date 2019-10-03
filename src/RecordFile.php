@@ -7,6 +7,7 @@ use DateTime;
 use Exception;
 use Symfony\Component\Console\Helper\Table;
 use ZeitBuchung\Exception\ZeitBuchungException;
+use ZeitBuchung\Structure\RecordStructure;
 use ZeitBuchung\Style\CustomStyle;
 
 /**
@@ -25,7 +26,7 @@ class RecordFile
     /** @var string */
     private $contentString = '';
 
-    /** @var array */
+    /** @var RecordStructure[] */
     private $contentArray = [];
 
     /** @var CustomStyle */
@@ -35,7 +36,7 @@ class RecordFile
      * RecordFile constructor.
      *
      * @param CustomStyle $io
-     * @param string $fileName - e.g. "fileName.log"
+     * @param string $fileName - e.g. "fileName.json"
      * @param string $path - e.g. "/path/for/record/files/"
      * @throws ZeitBuchungException
      */
@@ -52,7 +53,7 @@ class RecordFile
         if (!empty($fileName)) {
             $this->fileName = $fileName;
         } else {
-            $this->fileName = date('Ymd') . '.log';
+            $this->fileName = date('Ymd') . '.json';
         }
 
         $this->checkFile();
@@ -110,6 +111,7 @@ class RecordFile
      *
      * @return void
      * @throws ZeitBuchungException
+     * @throws Exception
      */
     private function readFile(): void
     {
@@ -128,8 +130,10 @@ class RecordFile
      */
     private function checkForUnstoppedRecord(): bool
     {
-        if (!empty($this->contentString)) {
-            return substr_count($this->contentString, ';started;', -9) === 1;
+        if (!empty($this->contentArray)) {
+            $lastRecordKey = array_key_last($this->contentArray);
+
+            return null === $this->contentArray[$lastRecordKey]->getEnd();
         }
 
         return false;
@@ -138,23 +142,18 @@ class RecordFile
     /**
      * calculates the time difference between start and stop, minimum time is 1 minute
      *
-     * @param string $start
-     * @param string $stop
-     * @return string
+     * @param int $start
+     * @param int $stop
+     * @return int
      */
-    private function calculateTime(string $start, string $stop): string
+    private function calculateTime(int $start, int $stop): int
     {
-        $return = '1m';
+        $return = '1';
 
-        $timeInSeconds = strtotime($stop) - strtotime($start);
+        $timeInSeconds = $stop - $start;
         $timeInMinutes = round($timeInSeconds / 60);
         if (1 < $timeInMinutes) {
-            $return = $timeInMinutes . 'm';
-
-            if (15 <= $timeInMinutes) {
-                $timeInHours = round($timeInMinutes / 60, 2);
-                $return .= ' / ' . $timeInHours . 'h';
-            }
+            $return = $timeInMinutes;
         }
 
         return $return;
@@ -166,6 +165,7 @@ class RecordFile
      * @param string $inputTime
      * @return void
      * @throws ZeitBuchungException
+     * @throws Exception
      */
     public function stop(?string $inputTime = ''): void
     {
@@ -174,23 +174,34 @@ class RecordFile
             exit(0);
         }
 
-        $reversedContentArray = array_reverse($this->contentArray);
-        $lastRecord = $reversedContentArray[0];
+        $lastRecordKey = array_key_last($this->contentArray);
+        $lastRecord = $this->contentArray[$lastRecordKey];
         $checkedInputTime = $this->checkInputTime($inputTime);
 
         if (null !== $checkedInputTime) {
-            $lastRecord['stop'] = date('H:i:s', $checkedInputTime->getTimestamp());
-            if (strtotime($lastRecord['start']) > strtotime($lastRecord['stop'])) {
+            $stop = $checkedInputTime;
+            if (strtotime($lastRecord->getHumanReadableStartTime())
+                > strtotime(date('H:i:s', $checkedInputTime->getTimestamp()))
+            ) {
                 $this->io->warning('Input time is not valid.');
-                $lastRecord['stop'] = date('H:i:s');
+                $stop = new DateTime();
             }
         } else {
-            $lastRecord['stop'] = date('H:i:s');
+            $stop = new DateTime();
         }
 
-        $lastRecord['time'] = $this->calculateTime($lastRecord['start'], $lastRecord['stop']);
+        $lastRecord->setEnd($stop);
 
-        $writeResult = file_put_contents($this->path . $this->fileName, $lastRecord['stop'] . ';' . $lastRecord['time'] . ';stopped;' . PHP_EOL, FILE_APPEND);
+        $lastRecord->setTimeInMinutes(
+            $this->calculateTime(
+                $lastRecord->getStart()->getTimestamp(),
+                $lastRecord->getEnd()->getTimestamp()
+            )
+        );
+
+        $this->contentArray[$lastRecordKey] = $lastRecord;
+
+        $writeResult = file_put_contents($this->path . $this->fileName, json_encode($this->contentArray));
 
         if (false === $writeResult) {
             throw new ZeitBuchungException('Cannot write content to record file! "' . $this->path . $this->fileName . '"', 102);
@@ -198,9 +209,9 @@ class RecordFile
 
         $this->io->text([
             'Stopped last record:',
-            $lastRecord['message'],
-            $lastRecord['start'] . ' - ' . $lastRecord['stop'],
-            $lastRecord['time'],
+            $lastRecord->getMessage(),
+            $lastRecord->getHumanReadableStartTime() . ' - ' . $lastRecord->getHumanReadableEndTime(),
+            $lastRecord->getHumanReadableTimePeriod(),
         ]);
     }
 
@@ -211,6 +222,7 @@ class RecordFile
      * @param string $inputTime
      * @return void
      * @throws ZeitBuchungException
+     * @throws Exception
      */
     public function start(string $message, ?string $inputTime = ''): void
     {
@@ -222,14 +234,14 @@ class RecordFile
         $checkedInputTime = $this->checkInputTime($inputTime);
 
         if (null !== $checkedInputTime) {
-            $start = date('H:i:s', $checkedInputTime->getTimestamp());
+            $start = $checkedInputTime;
         } else {
-            $start = date('H:i:s');
+            $start = new DateTime();
         }
 
-        $message = str_replace(';', ',', $message);
-        $recordRow = $start . ';' . $message . ';started;';
-        $writeResult = file_put_contents($this->path . $this->fileName, $recordRow, FILE_APPEND);
+        $this->contentArray[] = new RecordStructure($start, null, $message, 0);
+
+        $writeResult = file_put_contents($this->path . $this->fileName, json_encode($this->contentArray));
 
         if (false === $writeResult) {
             throw new ZeitBuchungException('Cannot write content to record file! "' . $this->path . $this->fileName . '"', 102);
@@ -237,7 +249,7 @@ class RecordFile
 
         $this->io->text([
             'Started new record:',
-            $start . ' - ' . $message,
+            date('H:i:s', $start->getTimestamp()) . ' - ' . $message,
         ]);
     }
 
@@ -261,13 +273,16 @@ class RecordFile
             'message',
             'time',
         ]);
-        $table->addRows($this->contentArray);
+
+        foreach ($this->contentArray as $record) {
+            $table->addRow($record->toArray());
+        }
 
         $table->render();
 
         $this->io->newLine();
         $sum = $this->getSum();
-        $this->io->text('Sum: ' . $sum['readable']);
+        $this->io->text('Sum: ' . $this->getHumanReadableSum($sum));
     }
 
     /**
@@ -282,43 +297,42 @@ class RecordFile
             exit(0);
         }
 
-        $reversedContentArray = array_reverse($this->contentArray);
-        $lastRecord = $reversedContentArray[0];
-        $lastRecord['stop'] = date('H:i:s');
-        $lastRecord['time'] = $this->calculateTime($lastRecord['start'], $lastRecord['stop']);
+        $lastRecordKey = array_key_last($this->contentArray);
+        $lastRecord = $this->contentArray[$lastRecordKey];
+
+        $calculatedTime = $this->calculateTime(
+            strtotime($lastRecord->getHumanReadableStartTime()),
+            strtotime(date('H:i:s'))
+        );
 
         $this->io->text([
             'Active record:',
-            $lastRecord['message'],
-            $lastRecord['start'] . ' (' . $lastRecord['time'] . ')',
+            $lastRecord->getMessage(),
+            $lastRecord->getHumanReadableStartTime()
+            . ' (' . $this->getHumanReadableSum($calculatedTime) . ')',
         ]);
         $this->io->newLine();
 
-        preg_match('/^\d*/', $lastRecord['time'], $timeInMinutes);
         $sum = $this->getSum();
-        $this->io->text('Sum: ' . $this->getHumanReadableSum($sum['minutes'] + $timeInMinutes[0]));
+        $this->io->text('Sum: ' . $this->getHumanReadableSum($sum + $calculatedTime));
     }
 
     /**
      * returns the time sum of the day
      *
-     * @return array
+     * @return int
      */
-    private function getSum(): array
+    private function getSum(): int
     {
         $sumInMinutes = 0;
 
-        foreach ($this->contentArray as $row) {
-            if (!empty($row['time'])) {
-                preg_match('/^\d*/', $row['time'], $timeInMinutes);
-                $sumInMinutes += (int)$timeInMinutes[0];
+        foreach ($this->contentArray as $record) {
+            if (null !== $record->getTimeInMinutes()) {
+                $sumInMinutes += $record->getTimeInMinutes();
             }
         }
 
-        $return['minutes'] = $sumInMinutes;
-        $return['readable'] = $this->getHumanReadableSum($sumInMinutes);
-
-        return $return;
+        return $sumInMinutes;
     }
 
     /**
@@ -411,24 +425,29 @@ class RecordFile
     /**
      * @param string $contentString
      * @return void
+     * @throws Exception
      */
     private function setContentArray(string $contentString): void
     {
         $contentArray = [];
 
         if (!empty($contentString)) {
-            $rows = explode(PHP_EOL, $contentString);
+            $jsonArray = json_decode($contentString, false);
 
-            foreach ($rows as $row) {
-                $rowArray = explode(';', $row);
+            if (!empty($jsonArray)) {
+                foreach ($jsonArray as $record) {
+                    if (null === $record->end) {
+                        $end = null;
+                    } else {
+                        $end = new DateTime($record->end->date);
+                    }
 
-                if (!empty($rowArray[2]) && 'started' === $rowArray[2]) {
-                    $contentArray[] = [
-                        'start' => !empty($rowArray[0]) ? $rowArray[0] : '',
-                        'stop' => !empty($rowArray[3]) ? $rowArray[3] : '',
-                        'message' => !empty($rowArray[1]) ? $rowArray[1] : '',
-                        'time' => !empty($rowArray[4]) ? $rowArray[4] : '',
-                    ];
+                    $contentArray[] = new RecordStructure(
+                        new DateTime($record->start->date),
+                        $end,
+                        $record->message,
+                        $record->timeInMinutes
+                    );
                 }
             }
         }
