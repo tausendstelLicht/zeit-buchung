@@ -6,6 +6,8 @@ namespace ZeitBuchung\Helper;
 use DateTime;
 use Exception;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\TableSeparator;
 use ZeitBuchung\Exception\ZeitBuchungException;
 use ZeitBuchung\Structure\RecordStructure;
 use ZeitBuchung\Style\CustomStyle;
@@ -453,5 +455,61 @@ class RecordFile
         }
 
         $this->contentArray = $contentArray;
+    }
+
+    /**
+     * @param bool $sort
+     * @return array
+     */
+    private function getListingTable(bool $sort = false): array
+    {
+        $return = [
+            'headers' => [
+                'start',
+                'stop',
+                'message',
+                'time',
+            ],
+            'rows' => [],
+        ];
+
+        if (!empty($this->contentArray)) {
+            $rows = [];
+
+            if ($sort) {
+                $recordsSortedByMessage = [];
+                $timeSumInMinutesByMessage = [];
+
+                foreach ($this->contentArray as $row) {
+                    $recordsSortedByMessage[$row->getMessage()][] = $row;
+
+                    if (!isset($timeSumInMinutesByMessage[$row->getMessage()])) {
+                        $timeSumInMinutesByMessage[$row->getMessage()] = 0;
+                    }
+
+                    $timeSumInMinutesByMessage[$row->getMessage()] += $row->getTimeInMinutes();
+                }
+
+                foreach ($recordsSortedByMessage as $message => $messageRecords) {
+                    foreach ($messageRecords as $record) {
+                        $rows[] = $record->toArray();
+                    }
+
+                    $rows[] = [
+                        new TableCell('', ['colspan' => 3]),
+                        '-----> ' . $this->getHumanReadableSum($timeSumInMinutesByMessage[$message]),
+                    ];
+                    $rows[] = new TableSeparator();
+                }
+            } else {
+                foreach ($this->contentArray as $row) {
+                    $rows[] = $row->toArray();
+                }
+            }
+
+            $return['rows'] = $rows;
+        }
+
+        return $return;
     }
 }
