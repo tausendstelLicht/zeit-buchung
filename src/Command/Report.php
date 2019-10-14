@@ -67,21 +67,21 @@ class Report extends Command
 
         if (!empty($inputDate)) {
             switch (true) {
-                case preg_match('/^(0[1-9]|[12]\d|3[01])\.(0[1-9]|11|12)\.$/', $inputDate): // DD.MM.
+                case preg_match('/^(0[1-9]|[12]\d|3[01])\.(0[1-9]|1[012])\.$/', $inputDate): // DD.MM.
                     $inputDate .= date('Y');
                     $return = date('Ymd', strtotime($inputDate)) . '.json';
                     break;
-                case preg_match('/^(0[1-9]|[12]\d|3[01])\.(0[1-9]|11|12)\.\d{4}$/', $inputDate): // DD.MM.YYYY
+                case preg_match('/^(0[1-9]|[12]\d|3[01])\.(0[1-9]|1[012])\.\d{4}$/', $inputDate): // DD.MM.YYYY
                     $return = date('Ymd', strtotime($inputDate)) . '.json';
                     break;
-                case preg_match('/^\d{2}\-(0[1-9]|11|12)\-(0[1-9]|[12]\d|3[01])$/', $inputDate): // YY-MM-DD
+                case preg_match('/^\d{2}\-(0[1-9]|1[012])\-(0[1-9]|[12]\d|3[01])$/', $inputDate): // YY-MM-DD
                     $return = date('Ymd', strtotime($inputDate)) . '.json';
                     break;
-                case preg_match('/^(0[1-9]|11|12)\-(0[1-9]|[12]\d|3[01])$/', $inputDate): // MM-DD
+                case preg_match('/^(0[1-9]|1[012])\-(0[1-9]|[12]\d|3[01])$/', $inputDate): // MM-DD
                     $inputDate = date('Y') . '-' . $inputDate;
                     $return = date('Ymd', strtotime($inputDate)) . '.json';
                     break;
-                case preg_match('/^\d{4}\-(0[1-9]|11|12)\-(0[1-9]|[12]\d|3[01])$/', $inputDate): // YYYY-MM-DD
+                case preg_match('/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12]\d|3[01])$/', $inputDate): // YYYY-MM-DD
                     $return = date('Ymd', strtotime($inputDate)) . '.json';
                     break;
                 default:
