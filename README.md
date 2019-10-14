@@ -47,9 +47,9 @@ Folgende Informationen werden gespeichert:
 Der Statusbefehl gibt den laufenden Eintrag aus der Logdatei zurück und berechnet die aktuelle Laufzeit. Zusätzlich wird die erfasste Zeit des Tages inklusiver der aktuellen Laufzeit als Summe ausgegeben.
 
 ### report
-`php src/record.php report [<date>]`
+`php src/record.php report [options] [<date>]`
 
-Der Reportbefehl gibt alle Einträge der Logdatei tabellarisch zurück. Zusätzlich wird die erfasste Zeit als Summe ausgegeben. Mit dem optionalen Argument `<date>` kann ein Datum mitgegeben werden, um eine Logdatei der Vergangenheit aufzurufen.
+Der Reportbefehl gibt alle Einträge der Logdatei tabellarisch zurück. Zusätzlich wird die erfasste Zeit als Summe ausgegeben. Mit dem optionalen Argument `<date>` kann ein Datum mitgegeben werden, um eine Logdatei der Vergangenheit aufzurufen. Über die Option `--sort` (`-s`) werden die Einträge nach Beschreibung (message) sortiert aufgelistet. Besitzt eine Beschreibung mehr als einen Eintrag, so wird zusätzlich die Summe der Beschreibung ausgegeben. 
 
 Folgende Informationen werden als Spalte ausgegeben:
 * start (Startzeit)
