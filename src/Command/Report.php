@@ -7,6 +7,7 @@ namespace ZeitBuchung\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use ZeitBuchung\Exception\ZeitBuchungException;
 use ZeitBuchung\Helper\RecordFile;
@@ -32,6 +33,7 @@ class Report extends Command
         $this->setName('report');
         $this->setDescription('reports the records of the day');
         $this->addArgument('date', InputArgument::OPTIONAL, 'Date of the record file (possible format: YYYY-MM-DD, DD.MM.YYYY, MM-DD or DD.MM.)');
+        $this->addOption('sort', 's', InputOption::VALUE_NONE, 'Records will be sorted by messages.');
     }
 
     /**
@@ -47,7 +49,7 @@ class Report extends Command
 
         try {
             $recordFile = new RecordFile($this->io, $inputDate);
-            $recordFile->listing();
+            $recordFile->listing($input->getOption('sort'));
         } catch (ZeitBuchungException $e) {
             $this->io->error($e->getMessage());
 
