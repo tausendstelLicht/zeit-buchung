@@ -493,10 +493,12 @@ class RecordFile
                         $rows[] = $record->toArray();
                     }
 
-                    $rows[] = [
-                        new TableCell('', ['colspan' => 3]),
-                        '-----> ' . $this->getHumanReadableSum($timeSumInMinutesByMessage[$message]),
-                    ];
+                    if (1 < count($messageRecords)) {
+                        $rows[] = [
+                            new TableCell('', ['colspan' => 3]),
+                            '-----> ' . $this->getHumanReadableSum($timeSumInMinutesByMessage[$message]),
+                        ];
+                    }
 
                     if ($count < count($recordsSortedByMessage)) {
                         $rows[] = new TableSeparator();
