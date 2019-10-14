@@ -258,27 +258,21 @@ class RecordFile
     /**
      * outputs the whole record file as table
      *
+     * @param bool $sort
      * @return void
      */
-    public function listing(): void
+    public function listing(bool $sort = false): void
     {
+        $tableContent = $this->getListingTable($sort);
+
         $table = new Table($this->io);
 
         $tableStyle = $table->getStyle();
         $tableStyle->setHeaderTitleFormat('<bg=black;fg=white;options=bold>%s</>');
         $table->setStyle($tableStyle);
-
         $table->setHeaderTitle($this->fileName);
-        $table->setHeaders([
-            'start',
-            'stop',
-            'message',
-            'time',
-        ]);
-
-        foreach ($this->contentArray as $record) {
-            $table->addRow($record->toArray());
-        }
+        $table->setHeaders($tableContent['headers']);
+        $table->setRows($tableContent['rows']);
 
         $table->render();
 
