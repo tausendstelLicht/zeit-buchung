@@ -484,7 +484,11 @@ class RecordFile
                     $timeSumInMinutesByMessage[$row->getMessage()] += $row->getTimeInMinutes();
                 }
 
+                $count = 0;
+
                 foreach ($recordsSortedByMessage as $message => $messageRecords) {
+                    $count++;
+
                     foreach ($messageRecords as $record) {
                         $rows[] = $record->toArray();
                     }
@@ -493,7 +497,10 @@ class RecordFile
                         new TableCell('', ['colspan' => 3]),
                         '-----> ' . $this->getHumanReadableSum($timeSumInMinutesByMessage[$message]),
                     ];
-                    $rows[] = new TableSeparator();
+
+                    if ($count < count($recordsSortedByMessage)) {
+                        $rows[] = new TableSeparator();
+                    }
                 }
             } else {
                 foreach ($this->contentArray as $row) {
