@@ -13,6 +13,9 @@
             "email": "tausendstel.licht@gmail.com"
         }
     ],
+    "bin": [
+        "bin/zeit-buchung.php"
+    ],
     "autoload": {
         "classmap": [
             "src/"
