@@ -14,14 +14,14 @@ composer install
 ## Verwendung
 Das Tool wird über die Kommandozeile mithilfe von PHP aufgerufen.
 
-`php src/record.php`
+`php bin/zeit-buchung.php`
 
 Ohne Mitgabe eines weiteren Parameters/Kommandos, wird eine Übersicht aller Kommandos ausgeben und eine Hilfe angeboten. Mit dem entsprechenden Kommando kann man die Aufnahmesession starten und stoppen. Dabei wird jeweils nur ein Eintrag in eine tägliche Logdatei unter `recordFiles/` geschrieben. Es läuft also kein Hintergrundprozess.
 
 ## Kommandos
 
 ### start
-`php src/record.php start <message> [<startTime>]`
+`php bin/zeit-buchung.php start <message> [<startTime>]`
 
 Der Startbefehl erzeugt einen Eintrag in der heutigen Logdatei. Das Argument `message` ist obligatorisch.  
 Sollte der vorherige Eintrag noch nicht abgeschlossen sein, so wird dieser automatisch beendet. Sollte die Datei nicht existieren, so wird sie automatisch angelegt.
@@ -36,7 +36,7 @@ Folgende Informationen werden gespeichert:
 * Status
 
 ### stop
-`php src/record.php stop [<stopTime>]`
+`php bin/zeit-buchung.php stop [<stopTime>]`
 
 Der Stopbefehl beendet den letzten Eintrag aus der Logdatei und gibt diesen im Terminal aus. 
 Sollte die Datei nicht existieren oder der letzte Logeintrag bereits beendet sein, so wird eine Warnung ausgegeben.
@@ -50,12 +50,12 @@ Folgende Informationen werden gespeichert:
 * Status
 
 ### status
-`php src/record.php status`
+`php bin/zeit-buchung.php status`
 
 Der Statusbefehl gibt den laufenden Eintrag aus der Logdatei zurück und berechnet die aktuelle Laufzeit. Zusätzlich wird die erfasste Zeit des Tages inklusiver der aktuellen Laufzeit als Summe ausgegeben.
 
 ### report
-`php src/record.php report [options] [<date>]`
+`php bin/zeit-buchung.php report [options] [<date>]`
 
 Der Reportbefehl gibt alle Einträge der Logdatei tabellarisch zurück. Zusätzlich wird die erfasste Zeit als Summe ausgegeben. Mit dem optionalen Argument `<date>` kann ein Datum mitgegeben werden, um eine Logdatei der Vergangenheit aufzurufen. Über die Option `--sort` (`-s`) werden die Einträge nach Beschreibung (message) sortiert aufgelistet. Besitzt eine Beschreibung mehr als einen Eintrag, so wird zusätzlich die Summe der Beschreibung ausgegeben. 
 
