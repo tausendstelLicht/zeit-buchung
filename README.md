@@ -3,6 +3,14 @@
 ## Einleitung
 Dieses Kommandozeilentool unterstützt die Erfassung der Zeit für die spätere oder direkte Zeitbuchung.
 
+## Installation
+
+Um alle benötigten Abhängigkeiten zu installieren, müssen diese mit Hilfe von [Composer](https://getcomposer.org) installiert werden.
+
+```
+composer install
+```
+
 ## Verwendung
 Das Tool wird über die Kommandozeile mithilfe von PHP aufgerufen.
 
