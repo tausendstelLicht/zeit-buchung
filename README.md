@@ -56,3 +56,6 @@ Folgende Informationen werden als Spalte ausgegeben:
 * stop (Stopzeit)
 * message (Beschreibung)
 * time (Zeitdauer)
+
+## Lizenz
+Dieses Paket wird unter der [MIT LICENSE](LICENSE) zur Verfügung gestellt.
