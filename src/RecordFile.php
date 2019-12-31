@@ -456,7 +456,8 @@ class RecordFile
                         new DateTime($record->start->date),
                         $end,
                         $record->message,
-                        $record->timeInMinutes
+                        $record->timeInMinutes,
+                        $record->task
                     );
                 }
             }
@@ -494,7 +495,8 @@ class RecordFile
                 foreach ($this->contentArray as $row) {
                     if (!empty($row->getTask())) {
                         $recordsSortedByTask[$row->getTask()][] = $row;
-                        if (!isset($recordsSortedByTask[$row->getTask()])) {
+
+                        if (!isset($timeSumInMinutesByTask[$row->getTask()])) {
                             $timeSumInMinutesByTask[$row->getTask()] = 0;
                         }
 
@@ -511,6 +513,10 @@ class RecordFile
                 }
 
                 $rows = array_merge($rows, $this->getSortedTableRows($recordsSortedByTask, $timeSumInMinutesByTask));
+
+                if (!empty($recordsSortedByMessage)) {
+                    $rows[] = new TableSeparator();
+                }
                 $rows = array_merge($rows, $this->getSortedTableRows($recordsSortedByMessage, $timeSumInMinutesByMessage));
             } else {
                 foreach ($this->contentArray as $row) {
@@ -547,7 +553,7 @@ class RecordFile
 
             if (1 < count($records)) {
                 $return[] = [
-                    new TableCell('', ['colspan' => 3]),
+                    new TableCell('', ['colspan' => 4]),
                     '-----> ' . $this->getHumanReadableSum($timeSumInMinutesBySortCriteria[$sortCriteria]),
                 ];
             }
