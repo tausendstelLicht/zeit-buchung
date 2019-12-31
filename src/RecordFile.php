@@ -209,9 +209,15 @@ class RecordFile
             throw new ZeitBuchungException('Cannot write content to record file! "' . $this->path . $this->fileName . '"', 102);
         }
 
+        $taskInfo = '';
+
+        if (!empty($lastRecord->getTask())) {
+            $taskInfo = ' (' . $lastRecord->getTask() . ')';
+        }
+
         $this->io->text([
             'Stopped last record:',
-            $lastRecord->getMessage(),
+            $lastRecord->getMessage() . $taskInfo,
             $lastRecord->getHumanReadableStartTime() . ' - ' . $lastRecord->getHumanReadableEndTime(),
             $lastRecord->getHumanReadableTimePeriod(),
         ]);
