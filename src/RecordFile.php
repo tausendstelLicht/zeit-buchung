@@ -229,7 +229,7 @@ class RecordFile
     public function start(string $message, ?string $inputTime = ''): void
     {
         if ($this->checkForUnstoppedRecord()) {
-            $this->stop();
+            $this->stop($inputTime);
             $this->io->newLine(2);
         }
 
