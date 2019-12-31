@@ -24,6 +24,9 @@ class RecordStructure implements JsonSerializable
     /** @var int */
     private $timeInMinutes;
 
+    /** @var string */
+    private $task;
+
     /**
      * RecordStructure constructor.
      *
@@ -31,13 +34,20 @@ class RecordStructure implements JsonSerializable
      * @param null|DateTime $end
      * @param string $message
      * @param int $timeInMinutes
+     * @param string|null $task
      */
-    public function __construct(DateTime $start, ?DateTime $end, string $message, int $timeInMinutes)
-    {
+    public function __construct(
+        DateTime $start,
+        ?DateTime $end,
+        string $message,
+        int $timeInMinutes,
+        ?string $task = ''
+    ) {
         $this->start = $start;
         $this->end = $end;
         $this->message = $message;
         $this->timeInMinutes = $timeInMinutes;
+        $this->task = $task ?? '';
     }
 
     /**
@@ -109,6 +119,23 @@ class RecordStructure implements JsonSerializable
     }
 
     /**
+     * @return string
+     */
+    public function getTask(): string
+    {
+        return $this->task;
+    }
+
+    /**
+     * @param string|null $task
+     * @return void
+     */
+    public function setTask(?string $task): void
+    {
+        $this->task = $task ?? '';
+    }
+
+    /**
      * @param null|DateTime $dateTime
      * @return string
      */
@@ -162,6 +189,7 @@ class RecordStructure implements JsonSerializable
             'end' => $this->getHumanReadableEndTime(),
             'message' => $this->getMessage(),
             'time' => $this->getHumanReadableTimePeriod(),
+            'task' => $this->getTask(),
         ];
     }
 
@@ -180,6 +208,7 @@ class RecordStructure implements JsonSerializable
             'end' => $this->end,
             'message' => $this->message,
             'timeInMinutes' => $this->timeInMinutes,
+            'task' => $this->task,
         ];
     }
 }
