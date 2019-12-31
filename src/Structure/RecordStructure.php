@@ -187,9 +187,9 @@ class RecordStructure implements JsonSerializable
         return [
             'start' => $this->getHumanReadableStartTime(),
             'end' => $this->getHumanReadableEndTime(),
+            'task' => $this->getTask(),
             'message' => $this->getMessage(),
             'time' => $this->getHumanReadableTimePeriod(),
-            'task' => $this->getTask(),
         ];
     }
 
@@ -206,9 +206,9 @@ class RecordStructure implements JsonSerializable
         return [
             'start' => $this->start,
             'end' => $this->end,
+            'task' => $this->task,
             'message' => $this->message,
             'timeInMinutes' => $this->timeInMinutes,
-            'task' => $this->task,
         ];
     }
 }
