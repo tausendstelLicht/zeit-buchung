@@ -31,7 +31,7 @@ class Report extends Command
         $this->setName('report');
         $this->setDescription('reports the records of the day');
         $this->addArgument('date', InputArgument::OPTIONAL, 'Date of the record file (possible format: YYYY-MM-DD, DD.MM.YYYY, MM-DD or DD.MM.)');
-        $this->addOption('sort', 's', InputOption::VALUE_NONE, 'Records will be sorted by messages.');
+        $this->addOption('sort', 's', InputOption::VALUE_NONE, 'Records will be sorted by tasks and messages.');
     }
 
     /**
