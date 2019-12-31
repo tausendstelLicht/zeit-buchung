@@ -475,6 +475,7 @@ class RecordFile
             'headers' => [
                 'start',
                 'stop',
+                'task',
                 'message',
                 'time',
             ],
@@ -486,38 +487,31 @@ class RecordFile
 
             if ($sort) {
                 $recordsSortedByMessage = [];
+                $recordsSortedByTask = [];
                 $timeSumInMinutesByMessage = [];
+                $timeSumInMinutesByTask = [];
 
                 foreach ($this->contentArray as $row) {
-                    $recordsSortedByMessage[$row->getMessage()][] = $row;
+                    if (!empty($row->getTask())) {
+                        $recordsSortedByTask[$row->getTask()][] = $row;
+                        if (!isset($recordsSortedByTask[$row->getTask()])) {
+                            $timeSumInMinutesByTask[$row->getTask()] = 0;
+                        }
 
-                    if (!isset($timeSumInMinutesByMessage[$row->getMessage()])) {
-                        $timeSumInMinutesByMessage[$row->getMessage()] = 0;
-                    }
+                        $timeSumInMinutesByTask[$row->getTask()] += $row->getTimeInMinutes();
+                    } else {
+                        $recordsSortedByMessage[$row->getMessage()][] = $row;
 
-                    $timeSumInMinutesByMessage[$row->getMessage()] += $row->getTimeInMinutes();
-                }
+                        if (!isset($timeSumInMinutesByMessage[$row->getMessage()])) {
+                            $timeSumInMinutesByMessage[$row->getMessage()] = 0;
+                        }
 
-                $count = 0;
-
-                foreach ($recordsSortedByMessage as $message => $messageRecords) {
-                    $count++;
-
-                    foreach ($messageRecords as $record) {
-                        $rows[] = $record->toArray();
-                    }
-
-                    if (1 < count($messageRecords)) {
-                        $rows[] = [
-                            new TableCell('', ['colspan' => 3]),
-                            '-----> ' . $this->getHumanReadableSum($timeSumInMinutesByMessage[$message]),
-                        ];
-                    }
-
-                    if ($count < count($recordsSortedByMessage)) {
-                        $rows[] = new TableSeparator();
+                        $timeSumInMinutesByMessage[$row->getMessage()] += $row->getTimeInMinutes();
                     }
                 }
+
+                $rows = array_merge($rows, $this->getSortedTableRows($recordsSortedByTask, $timeSumInMinutesByTask));
+                $rows = array_merge($rows, $this->getSortedTableRows($recordsSortedByMessage, $timeSumInMinutesByMessage));
             } else {
                 foreach ($this->contentArray as $row) {
                     $rows[] = $row->toArray();
@@ -525,6 +519,42 @@ class RecordFile
             }
 
             $return['rows'] = $rows;
+        }
+
+        return $return;
+    }
+
+    /**
+     * @param array $sortedRecords
+     * @param array $timeSumInMinutesBySortCriteria
+     * @return array
+     */
+    private function getSortedTableRows(array $sortedRecords, array $timeSumInMinutesBySortCriteria): array
+    {
+        $return = [];
+        $count = 0;
+
+        /**
+         * @var string $sortCriteria
+         * @var RecordStructure[] $records
+         */
+        foreach ($sortedRecords as $sortCriteria => $records) {
+            $count++;
+
+            foreach ($records as $record) {
+                $return[] = $record->toArray();
+            }
+
+            if (1 < count($records)) {
+                $return[] = [
+                    new TableCell('', ['colspan' => 3]),
+                    '-----> ' . $this->getHumanReadableSum($timeSumInMinutesBySortCriteria[$sortCriteria]),
+                ];
+            }
+
+            if ($count < count($sortedRecords)) {
+                $return[] = new TableSeparator();
+            }
         }
 
         return $return;
