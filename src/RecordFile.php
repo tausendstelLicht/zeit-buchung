@@ -222,11 +222,11 @@ class RecordFile
      *
      * @param string $message
      * @param string $inputTime
+     * @param string|null $task
      * @return void
      * @throws ZeitBuchungException
-     * @throws Exception
      */
-    public function start(string $message, ?string $inputTime = ''): void
+    public function start(string $message, ?string $inputTime = '', ?string $task = null): void
     {
         if ($this->checkForUnstoppedRecord()) {
             $this->stop($inputTime);
@@ -241,7 +241,7 @@ class RecordFile
             $start = new DateTime();
         }
 
-        $this->contentArray[] = new RecordStructure($start, null, $message, 0);
+        $this->contentArray[] = new RecordStructure($start, null, $message, 0, $task);
 
         $writeResult = file_put_contents($this->path . $this->fileName, json_encode($this->contentArray));
 
@@ -249,10 +249,18 @@ class RecordFile
             throw new ZeitBuchungException('Cannot write content to record file! "' . $this->path . $this->fileName . '"', 102);
         }
 
-        $this->io->text([
-            'Started new record:',
-            date('H:i:s', $start->getTimestamp()) . ' - ' . $message,
-        ]);
+        $taskInfo = '';
+
+        if (null !== $task) {
+            $taskInfo = ' (' . $task . ')';
+        }
+
+        $this->io->text(
+            [
+                'Started new record:',
+                date('H:i:s', $start->getTimestamp()) . ' - ' . $message . $taskInfo,
+            ]
+        );
     }
 
     /**
