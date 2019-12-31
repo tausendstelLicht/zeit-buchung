@@ -1,8 +1,6 @@
 <?php
 
-
 namespace ZeitBuchung\Exception;
-
 
 use Exception;
 

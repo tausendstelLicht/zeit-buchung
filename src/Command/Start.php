@@ -1,8 +1,6 @@
 <?php
 
-
 namespace ZeitBuchung\Command;
-
 
 use Exception;
 use Symfony\Component\Console\Command\Command;

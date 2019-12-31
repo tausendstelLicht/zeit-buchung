@@ -1,8 +1,6 @@
 <?php
 
-
 namespace ZeitBuchung\Style;
-
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ZeitBuchung\Helper;
 
 use DateTime;
@@ -182,7 +181,8 @@ class RecordFile
 
         if (null !== $checkedInputTime) {
             $stop = $checkedInputTime;
-            if (strtotime($lastRecord->getHumanReadableStartTime())
+            if (
+                strtotime($lastRecord->getHumanReadableStartTime())
                 > strtotime(date('H:i:s', $checkedInputTime->getTimestamp()))
             ) {
                 $this->io->warning('Input time is not valid.');

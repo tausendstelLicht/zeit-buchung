@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ZeitBuchung\Structure;
 
 use DateTime;

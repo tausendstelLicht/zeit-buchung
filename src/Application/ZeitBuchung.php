@@ -2,7 +2,6 @@
 
 namespace ZeitBuchung\Application;
 
-
 use Symfony\Component\Console\Application;
 use ZeitBuchung\Command\Report;
 use ZeitBuchung\Command\Start;
