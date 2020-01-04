@@ -45,10 +45,7 @@ class CustomStyleTest extends TestCase
     public function testNote(): void
     {
         $this->outputInterface->write(Argument::type('string'))->shouldBeCalled();
-        $this->outputInterface->writeln(
-            '<fg=white;bg=blue> ! [NOTE] message                                                                                                                        </>',
-            1
-        )->shouldBeCalled();
+        $this->outputInterface->writeln(Argument::type('string'), 1)->shouldBeCalled();
         $this->testClass->note('message');
     }
 
