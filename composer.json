@@ -2,6 +2,7 @@
     "name": "tausendstel-licht/zeit-buchung",
     "description": "Console tool to record working time.",
     "type": "project",
+    "license": "MIT",
     "require": {
         "symfony/console": "^4.3",
         "php": "^7.2",
