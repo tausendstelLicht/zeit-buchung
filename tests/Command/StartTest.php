@@ -52,20 +52,22 @@ class StartTest extends TestCase
             ],
         ];
 
-        foreach ($this->testClass->getDefinition()->getArguments() as $argument) {
-            $this->assertArrayHasKey($argument->getName(), $expectedArguments);
+        if (!empty($this->testClass->getDefinition()->getArguments())) {
+            foreach ($this->testClass->getDefinition()->getArguments() as $argument) {
+                $this->assertArrayHasKey($argument->getName(), $expectedArguments);
 
-            if (array_key_exists($argument->getName(), $expectedArguments)) {
-                $this->assertEquals($expectedArguments[$argument->getName()]['name'], $argument->getName());
+                if (array_key_exists($argument->getName(), $expectedArguments)) {
+                    $this->assertEquals($expectedArguments[$argument->getName()]['name'], $argument->getName());
 
-                if (InputArgument::REQUIRED === $expectedArguments[$argument->getName()]['mode']) {
-                    $this->assertTrue($argument->isRequired());
-                } else {
-                    $this->assertFalse($argument->isRequired());
+                    if (InputArgument::REQUIRED === $expectedArguments[$argument->getName()]['mode']) {
+                        $this->assertTrue($argument->isRequired());
+                    } else {
+                        $this->assertFalse($argument->isRequired());
+                    }
                 }
-            }
 
-            $this->assertNotEmpty($argument->getDescription());
+                $this->assertNotEmpty($argument->getDescription());
+            }
         }
     }
 
@@ -84,32 +86,34 @@ class StartTest extends TestCase
             ],
         ];
 
-        foreach ($this->testClass->getDefinition()->getOptions() as $option) {
-            $this->assertArrayHasKey($option->getName(), $expectedOptions);
+        if (!empty($this->testClass->getDefinition()->getOptions())) {
+            foreach ($this->testClass->getDefinition()->getOptions() as $option) {
+                $this->assertArrayHasKey($option->getName(), $expectedOptions);
 
-            if (array_key_exists($option->getName(), $expectedOptions)) {
-                $this->assertEquals($expectedOptions[$option->getName()]['name'], $option->getName());
-                $this->assertEquals($expectedOptions[$option->getName()]['shortcut'], $option->getShortcut());
+                if (array_key_exists($option->getName(), $expectedOptions)) {
+                    $this->assertEquals($expectedOptions[$option->getName()]['name'], $option->getName());
+                    $this->assertEquals($expectedOptions[$option->getName()]['shortcut'], $option->getShortcut());
 
-                switch ($expectedOptions[$option->getName()]['mode']) {
-                    case InputOption::VALUE_NONE:
-                        $this->assertFalse(
-                            $option->isValueRequired() && $option->isArray() && $option->isValueOptional()
-                        );
-                        break;
-                    case InputOption::VALUE_REQUIRED:
-                        $this->assertTrue($option->isValueRequired());
-                        break;
-                    case InputOption::VALUE_OPTIONAL:
-                        $this->assertTrue($option->isValueOptional());
-                        break;
-                    case InputOption::VALUE_IS_ARRAY:
-                        $this->assertTrue($option->isArray());
-                        break;
+                    switch ($expectedOptions[$option->getName()]['mode']) {
+                        case InputOption::VALUE_NONE:
+                            $this->assertFalse(
+                                $option->isValueRequired() && $option->isArray() && $option->isValueOptional()
+                            );
+                            break;
+                        case InputOption::VALUE_REQUIRED:
+                            $this->assertTrue($option->isValueRequired());
+                            break;
+                        case InputOption::VALUE_OPTIONAL:
+                            $this->assertTrue($option->isValueOptional());
+                            break;
+                        case InputOption::VALUE_IS_ARRAY:
+                            $this->assertTrue($option->isArray());
+                            break;
+                    }
                 }
-            }
 
-            $this->assertNotEmpty($option->getDescription());
+                $this->assertNotEmpty($option->getDescription());
+            }
         }
     }
 }
