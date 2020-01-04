@@ -463,7 +463,7 @@ class RecordFile
                         $end,
                         $record->message,
                         $record->timeInMinutes,
-                        $record->task
+                        $record->task ?? null
                     );
                 }
             }
