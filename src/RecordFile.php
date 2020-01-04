@@ -315,9 +315,15 @@ class RecordFile
             strtotime(date('H:i:s'))
         );
 
+        $taskInfo = '';
+
+        if (!empty($lastRecord->getTask())) {
+            $taskInfo = ' (' . $lastRecord->getTask() . ')';
+        }
+
         $this->io->text([
             'Active record:',
-            $lastRecord->getMessage(),
+            $lastRecord->getMessage() . $taskInfo,
             $lastRecord->getHumanReadableStartTime()
             . ' (' . $this->getHumanReadableSum($calculatedTime) . ')',
         ]);
