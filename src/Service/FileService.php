@@ -25,13 +25,13 @@ class FileService
     /**
      * FileService constructor.
      *
-     * @param string $filePath
+     * @param string $savePath
      * @param DateTime $date
      * @throws Exception
      */
-    public function __construct(string $filePath, DateTime $date)
+    public function __construct(string $savePath, DateTime $date)
     {
-        $this->setSavePath($filePath);
+        $this->setSavePath($savePath);
         $this->setFileNameByDate($date);
         $this->setDateDirectory($date);
     }
