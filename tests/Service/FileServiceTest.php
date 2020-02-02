@@ -7,7 +7,10 @@ use Exception;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
 use org\bovigo\vfs\vfsStreamException;
+use Prophecy\Prophet;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use ZeitBuchung\Exception\ZeitBuchungException;
+use ZeitBuchung\Interfaces\SymfonyStyleInterface;
 use ZeitBuchung\Service\FileService;
 use PHPUnit\Framework\TestCase;
 
@@ -24,6 +27,12 @@ class FileServiceTest extends TestCase
     /** @var vfsStreamDirectory */
     private $vfsStreamRoot;
 
+    /** @var Prophet */
+    private $prophet;
+
+    /** @var SymfonyStyle */
+    private $prophesiedSymfonyStyle;
+
     /**
      * @return void
      * @throws Exception
@@ -33,6 +42,8 @@ class FileServiceTest extends TestCase
         $date = new DateTime('06.01.2020');
         $this->vfsStreamRoot = vfsStream::setup('testRoot');
         $this->service = new FileService(vfsStream::url('testRoot'), $date);
+        $this->prophet = new Prophet();
+        $this->prophesiedSymfonyStyle = $this->prophet->prophesize(SymfonyStyle::class)->reveal();
     }
 
     /**
@@ -40,6 +51,7 @@ class FileServiceTest extends TestCase
      */
     protected function tearDown(): void
     {
+        $this->prophet->checkPredictions();
     }
 
     /**
@@ -51,6 +63,14 @@ class FileServiceTest extends TestCase
         $this->assertEquals('20200106.json', $this->service->getFileName());
         $this->assertEquals(vfsStream::url('testRoot'), $this->service->getSavePath());
         $this->assertEquals($dateDirectory, $this->service->getDateDirectory());
+    }
+
+    /**
+     * @return void
+     */
+    public function testImplementsInterface(): void
+    {
+        $this->assertInstanceOf(SymfonyStyleInterface::class, $this->service);
     }
 
     /**
@@ -199,5 +219,15 @@ class FileServiceTest extends TestCase
         $this->assertEquals('file content ABC 1234', file_get_contents(vfsStream::url('testRoot/2020/01/20200106.json')));
         $this->service->saveContentToFile('NEW CONTENT');
         $this->assertEquals('NEW CONTENT', file_get_contents(vfsStream::url('testRoot/2020/01/20200106.json')));
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetterAndGetterOfSymfonyStyle(): void
+    {
+        $this->assertEquals(null, $this->service->getSymfonyStyle());
+        $this->service->setSymfonyStyle($this->prophesiedSymfonyStyle);
+        $this->assertInstanceOf(SymfonyStyle::class, $this->service->getSymfonyStyle());
     }
 }

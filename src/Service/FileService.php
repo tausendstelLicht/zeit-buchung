@@ -4,14 +4,16 @@ namespace ZeitBuchung\Service;
 
 use DateTime;
 use Exception;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use ZeitBuchung\Exception\ZeitBuchungException;
+use ZeitBuchung\Interfaces\SymfonyStyleInterface;
 
 /**
  * Class FileService
  *
  * @package ZeitBuchung\Service
  */
-class FileService
+class FileService implements SymfonyStyleInterface
 {
     /** @var string */
     private $fileName;
@@ -21,6 +23,9 @@ class FileService
 
     /** @var string */
     private $dateDirectory;
+
+    /** @var SymfonyStyle */
+    private $symfonyStyle;
 
     /**
      * FileService constructor.
@@ -175,5 +180,22 @@ class FileService
         if (false === $saved) {
             throw new ZeitBuchungException('Cannot save contents to file!');
         }
+    }
+
+    /**
+     * @return SymfonyStyle|null
+     */
+    public function getSymfonyStyle(): ?SymfonyStyle
+    {
+        return $this->symfonyStyle;
+    }
+
+    /**
+     * @param SymfonyStyle $symfonyStyle
+     * @return void
+     */
+    public function setSymfonyStyle(SymfonyStyle $symfonyStyle): void
+    {
+        $this->symfonyStyle = $symfonyStyle;
     }
 }
