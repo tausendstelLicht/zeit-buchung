@@ -12,7 +12,7 @@ use ZeitBuchung\Service\FileService;
 return [
     // user specific config
     'dateDefaultTimezone' => 'Europe/Berlin',
-    'savePath' => ZEIT_BUCHUNG_MODULE_ROOT . '/recordFiles',
+    'savePath' => ZEIT_BUCHUNG_ROOT . '/recordFiles',
 
     // module config
     'service_manager' => [

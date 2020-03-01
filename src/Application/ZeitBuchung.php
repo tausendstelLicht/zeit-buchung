@@ -2,6 +2,7 @@
 
 namespace ZeitBuchung\Application;
 
+use Laminas\ServiceManager\ServiceManager;
 use Symfony\Component\Console\Application;
 use ZeitBuchung\Command\Report;
 use ZeitBuchung\Command\Start;
@@ -19,13 +20,14 @@ class ZeitBuchung extends Application
      *
      * @param string $name
      * @param string $version
+     * @param ServiceManager $serviceManager
      */
-    public function __construct(string $name = 'UNKNOWN', string $version = 'UNKNOWN')
+    public function __construct(ServiceManager $serviceManager, string $name = 'UNKNOWN', string $version = 'UNKNOWN')
     {
         parent::__construct($name, $version);
-        $this->add(new Start());
-        $this->add(new Stop());
-        $this->add(new Report());
-        $this->add(new Status());
+        $this->add($serviceManager->get(Start::class));
+        $this->add($serviceManager->get(Stop::class));
+        $this->add($serviceManager->get(Report::class));
+        $this->add($serviceManager->get(Status::class));
     }
 }
