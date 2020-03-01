@@ -2,10 +2,13 @@
 
 namespace ZeitBuchung\Tests\Command;
 
+use Prophecy\Prophet;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use ZeitBuchung\Command\Report;
 use PHPUnit\Framework\TestCase;
+use ZeitBuchung\Service\DateTimeService;
+use ZeitBuchung\Service\FileService;
 
 /**
  * Class ReportTest
@@ -17,12 +20,18 @@ class ReportTest extends TestCase
     /** @var Report */
     private $testClass;
 
+    /** @var Prophet */
+    private $prophet;
+
     /**
      * @return void
      */
     protected function setUp(): void
     {
-        $this->testClass = new Report();
+        $this->prophet = new Prophet();
+        $fileService = $this->prophet->prophesize(FileService::class)->reveal();
+        $dateTimeService = $this->prophet->prophesize(DateTimeService::class)->reveal();
+        $this->testClass = new Report($fileService, $dateTimeService);
     }
 
     /**
