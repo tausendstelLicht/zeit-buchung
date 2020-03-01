@@ -17,9 +17,6 @@ use ZeitBuchung\Style\CustomStyle;
  */
 class Report extends Command
 {
-    /** @var CustomStyle */
-    protected $io;
-
     /**
      * configures the command (name, description, help)
      *
@@ -40,15 +37,15 @@ class Report extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $this->io = new CustomStyle($input, $output);
+        parent::execute($input, $output);
 
         $inputDate = $this->checkInputDate($input->getArgument('date'));
 
         try {
-            $recordFile = new RecordFile($this->io, $inputDate);
+            $recordFile = new RecordFile($this->symfonyStyle, $inputDate);
             $recordFile->listing($input->getOption('sort'));
         } catch (ZeitBuchungException $e) {
-            $this->io->error($e->getMessage());
+            $this->symfonyStyle->error($e->getMessage());
 
             return $e->getCode();
         }
@@ -84,7 +81,7 @@ class Report extends Command
                     $return = date('Ymd', strtotime($inputDate)) . '.json';
                     break;
                 default:
-                    $this->io->warning('Input date string is invalid. "' . $inputDate . '"');
+                    $this->symfonyStyle->warning('Input date string is invalid. "' . $inputDate . '"');
                     break;
             }
         }

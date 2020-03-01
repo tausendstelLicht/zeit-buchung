@@ -15,9 +15,6 @@ use ZeitBuchung\Style\CustomStyle;
  */
 class Status extends Command
 {
-    /** @var CustomStyle */
-    protected $io;
-
     /**
      * configures the command (name, description, help)
      *
@@ -36,13 +33,13 @@ class Status extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $this->io = new CustomStyle($input, $output);
+        parent::execute($input, $output);
 
         try {
-            $recordFile = new RecordFile($this->io);
+            $recordFile = new RecordFile($this->symfonyStyle);
             $recordFile->status();
         } catch (ZeitBuchungException $e) {
-            $this->io->error($e->getMessage());
+            $this->symfonyStyle->error($e->getMessage());
 
             return $e->getCode();
         }

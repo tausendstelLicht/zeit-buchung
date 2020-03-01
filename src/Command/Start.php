@@ -18,9 +18,6 @@ use ZeitBuchung\Style\CustomStyle;
  */
 class Start extends Command
 {
-    /** @var CustomStyle */
-    protected $io;
-
     /**
      * configures the command (name, description, help)
      *
@@ -43,16 +40,16 @@ class Start extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $this->io = new CustomStyle($input, $output);
+        parent::execute($input, $output);
 
         $time = $input->getArgument('time');
         $task = $input->getOption('task');
 
         try {
-            $recordFile = new RecordFile($this->io);
+            $recordFile = new RecordFile($this->symfonyStyle);
             $recordFile->start($input->getArgument('message'), $time, $task);
         } catch (ZeitBuchungException $e) {
-            $this->io->error($e->getMessage());
+            $this->symfonyStyle->error($e->getMessage());
 
             return $e->getCode();
         }
