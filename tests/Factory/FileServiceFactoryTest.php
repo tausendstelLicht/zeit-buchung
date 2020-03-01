@@ -53,7 +53,7 @@ class FileServiceFactoryTest extends TestCase
      * @return void
      * @throws ContainerException
      */
-    public function testInit(): void
+    public function testInvoke(): void
     {
         $serviceManager = $this->prophet->prophesize(ServiceManager::class);
         $serviceManager->willImplement(ContainerInterface::class);
