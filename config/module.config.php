@@ -8,6 +8,7 @@ use ZeitBuchung\Factory\CommandFactory;
 use ZeitBuchung\Factory\FileServiceFactory;
 use ZeitBuchung\Service\DateTimeService;
 use ZeitBuchung\Service\FileService;
+use ZeitBuchung\Service\RecordService;
 
 return [
     // user specific config
@@ -25,6 +26,7 @@ return [
         ],
         'invokables' => [
             DateTimeService::class => DateTimeService::class,
+            RecordService::class => RecordService::class,
         ],
     ],
 ];

@@ -17,6 +17,7 @@ use ZeitBuchung\Factory\CommandFactory;
 use PHPUnit\Framework\TestCase;
 use ZeitBuchung\Service\DateTimeService;
 use ZeitBuchung\Service\FileService;
+use ZeitBuchung\Service\RecordService;
 
 /**
  * Class CommandFactoryTest
@@ -78,10 +79,12 @@ class CommandFactoryTest extends TestCase
      */
     public function testInvoke(string $commandClassName): void
     {
+        $recordService = $this->prophet->prophesize(RecordService::class)->reveal();
         $fileService = $this->prophet->prophesize(FileService::class)->reveal();
         $dateTimeService = $this->prophet->prophesize(DateTimeService::class)->reveal();
         $serviceManager = $this->prophet->prophesize(ServiceManager::class);
         $serviceManager->willImplement(ContainerInterface::class);
+        $serviceManager->get(RecordService::class)->willReturn($recordService);
         $serviceManager->get(FileService::class)->willReturn($fileService);
         $serviceManager->get(DateTimeService::class)->willReturn($dateTimeService);
 

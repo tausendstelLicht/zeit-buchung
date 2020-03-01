@@ -9,6 +9,7 @@ use ZeitBuchung\Command\Report;
 use PHPUnit\Framework\TestCase;
 use ZeitBuchung\Service\DateTimeService;
 use ZeitBuchung\Service\FileService;
+use ZeitBuchung\Service\RecordService;
 
 /**
  * Class ReportTest
@@ -29,9 +30,10 @@ class ReportTest extends TestCase
     protected function setUp(): void
     {
         $this->prophet = new Prophet();
+        $recordService = $this->prophet->prophesize(RecordService::class)->reveal();
         $fileService = $this->prophet->prophesize(FileService::class)->reveal();
         $dateTimeService = $this->prophet->prophesize(DateTimeService::class)->reveal();
-        $this->testClass = new Report($fileService, $dateTimeService);
+        $this->testClass = new Report($recordService, $fileService, $dateTimeService);
     }
 
     /**

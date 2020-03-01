@@ -13,6 +13,7 @@ use ZeitBuchung\Command\Status;
 use ZeitBuchung\Command\Stop;
 use ZeitBuchung\Service\DateTimeService;
 use ZeitBuchung\Service\FileService;
+use ZeitBuchung\Service\RecordService;
 
 /**
  * Class ZeitBuchungTest
@@ -34,12 +35,13 @@ class ZeitBuchungTest extends TestCase
     {
         $this->prophet = new Prophet();
         $serviceManager = $this->prophet->prophesize(ServiceManager::class);
+        $recordService = $this->prophet->prophesize(RecordService::class)->reveal();
         $fileService = $this->prophet->prophesize(FileService::class)->reveal();
         $dateTimeService = $this->prophet->prophesize(DateTimeService::class)->reveal();
-        $serviceManager->get(Report::class)->willReturn(new Report($fileService, $dateTimeService));
-        $serviceManager->get(Start::class)->willReturn(new Start($fileService, $dateTimeService));
-        $serviceManager->get(Stop::class)->willReturn(new Stop($fileService, $dateTimeService));
-        $serviceManager->get(Status::class)->willReturn(new Status($fileService, $dateTimeService));
+        $serviceManager->get(Report::class)->willReturn(new Report($recordService, $fileService, $dateTimeService));
+        $serviceManager->get(Start::class)->willReturn(new Start($recordService, $fileService, $dateTimeService));
+        $serviceManager->get(Stop::class)->willReturn(new Stop($recordService, $fileService, $dateTimeService));
+        $serviceManager->get(Status::class)->willReturn(new Status($recordService, $fileService, $dateTimeService));
         $this->testClass = new ZeitBuchung($serviceManager->reveal());
     }
 

@@ -9,6 +9,7 @@ use ZeitBuchung\Command\Stop;
 use PHPUnit\Framework\TestCase;
 use ZeitBuchung\Service\DateTimeService;
 use ZeitBuchung\Service\FileService;
+use ZeitBuchung\Service\RecordService;
 
 /**
  * Class StopTest
@@ -29,9 +30,10 @@ class StopTest extends TestCase
     protected function setUp(): void
     {
         $this->prophet = new Prophet();
+        $recordService = $this->prophet->prophesize(RecordService::class)->reveal();
         $fileService = $this->prophet->prophesize(FileService::class)->reveal();
         $dateTimeService = $this->prophet->prophesize(DateTimeService::class)->reveal();
-        $this->testClass = new Stop($fileService, $dateTimeService);
+        $this->testClass = new Stop($recordService, $fileService, $dateTimeService);
     }
 
     /**

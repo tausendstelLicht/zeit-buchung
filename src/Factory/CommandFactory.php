@@ -11,6 +11,7 @@ use ZeitBuchung\Command\Command;
 use ZeitBuchung\Exception\ZeitBuchungException;
 use ZeitBuchung\Service\DateTimeService;
 use ZeitBuchung\Service\FileService;
+use ZeitBuchung\Service\RecordService;
 
 /**
  * Class CommandFactory
@@ -29,11 +30,13 @@ class CommandFactory implements FactoryInterface
             throw new ZeitBuchungException('Requested service must be in namespace "ZeitBuchung\Command"');
         }
 
+        /** @var RecordService $recordService */
+        $recordService = $container->get(RecordService::class);
         /** @var FileService $fileService */
         $fileService = $container->get(FileService::class);
         /** @var DateTimeService $dateTimeService */
         $dateTimeService = $container->get(DateTimeService::class);
 
-        return new $requestedName($fileService, $dateTimeService);
+        return new $requestedName($recordService, $fileService, $dateTimeService);
     }
 }
