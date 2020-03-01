@@ -8,7 +8,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use ZeitBuchung\Exception\ZeitBuchungException;
 use ZeitBuchung\Helper\RecordFile;
-use ZeitBuchung\Style\CustomStyle;
 
 /**
  * Class Stop

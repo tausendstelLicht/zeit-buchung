@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use ZeitBuchung\Exception\ZeitBuchungException;
 use ZeitBuchung\Helper\RecordFile;
-use ZeitBuchung\Style\CustomStyle;
 
 /**
  * Class Start
