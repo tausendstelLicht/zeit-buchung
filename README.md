@@ -18,6 +18,18 @@ Das Tool wird über die Kommandozeile mithilfe von PHP aufgerufen.
 
 Ohne Mitgabe eines weiteren Parameters/Kommandos, wird eine Übersicht aller Kommandos ausgeben und eine Hilfe angeboten. Mit dem entsprechenden Kommando kann man die Aufnahmesession starten und stoppen. Dabei wird jeweils nur ein Eintrag in eine tägliche Logdatei unter `recordFiles/` geschrieben. Es läuft also kein Hintergrundprozess.
 
+## Verwendung als Docker Image
+Das Tool kann auch als Docker Image geladen und ausgeführt werden. Dazu muss das Docker Image lokal erstellt werden und das Wrapperskript `zeitbuchung.sh` in die PATH-Variable aufgenommen werden. Bei Verwendung des Wrapperskriptes werden die Logdateien automatisch im Home-Verzeichnis unter `.zeitbuchung/records` angelegt.
+
+Kommandos werden einfach bei der Ausführung des Wrappers angehängt. Um einen Zeiteintrag zu starten genügt folgender Aufruf: `zeiteintrag.sh start "Eine Nachricht"`
+
+## Docker Image erstellen
+Das Docker Image kann mit folgendem Kommando erzeugt werden:
+
+`docker build -t zeitbuchung .`
+
+Alle Abhängigkeiten zu PHP und den Symfony Bibliotheken werden im Buildprozess automatisch installiert.
+
 ## Kommandos
 
 ### start
