@@ -54,7 +54,36 @@ class RecordFile
         if (!empty($fileName)) {
             $this->fileName = $fileName;
         } else {
-            $this->fileName = date('Ymd') . '.json';
+            $this->fileName = Null;
+        }
+
+        // prepare different values to check against
+        $newPath =  $this->path . date('Y') . DIRECTORY_SEPARATOR . date('m') . DIRECTORY_SEPARATOR;
+        $oldFileName = date('Ymd') . '.json';
+        $newFileName = date('d') . '.json';
+
+        // check if file in new convention exists
+        if(is_dir($newPath) && is_file($newPath . $newFileName)) 
+        {
+            $this->path = $newPath;
+            $this->fileName = $newFileName;
+        }
+        // if not, check if file in old convetions existst
+        elseif(is_file($this->path .$oldFileName)) {
+                $this->fileName = $oldFileName;
+        }
+        // otherwise use new convetion and create subfolders if necessary
+        else {
+            $this->path = $newPath;
+            $this->fileName = $newFileName;
+
+            // create all necessary subfolders
+            $tmpDir = '';
+            foreach (explode(DIRECTORY_SEPARATOR, $this->path) as $dir) {
+                if(!is_dir($tmpDir .= DIRECTORY_SEPARATOR . "$dir")) {
+                    mkdir($tmpDir);
+                }
+            }
         }
 
         $this->checkFile();
