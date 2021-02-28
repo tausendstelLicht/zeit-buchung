@@ -7,6 +7,7 @@ use ZeitBuchung\Command\Report;
 use ZeitBuchung\Command\Start;
 use ZeitBuchung\Command\Status;
 use ZeitBuchung\Command\Stop;
+use ZeitBuchung\Command\Export;
 
 /**
  * Class ZeitBuchung
@@ -27,5 +28,6 @@ class ZeitBuchung extends Application
         $this->add(new Stop());
         $this->add(new Report());
         $this->add(new Status());
+        $this->add(new Export());
     }
 }
